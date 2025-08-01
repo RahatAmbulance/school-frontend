@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, frontend]  # Changed from ubuntu-latest, targets frontend runner
+    runs-on: [self-hosted, frontend]
 
     steps:
       - name: Checkout code
