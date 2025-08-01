@@ -1,14 +1,15 @@
-name: Docker Build and Deploy (Frontend)
+name: Build and Deploy Frontend
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
-  DOCKER_IMAGE_NAME: frontend-app
-  CONTAINER_PORT: 3000
+  DOCKER_IMAGE_NAME: scholiq-frontend
+  CONTAINER_PORT: 80
   HOST_PORT: 3000
   NODE_VERSION: '16'
 
@@ -18,104 +19,105 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Docker Build and Push
-        uses: docker/build-push-action@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          context: .
-          push: false
-          load: true
-          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --legacy-peer-deps
+          npm audit fix --force || true
+
+      - name: Build application
+        run: |
+          NODE_OPTIONS="--max_old_space_size=4096" npm run build
+        env:
+          CI: false
+
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} ${{ env.DOCKER_IMAGE_NAME }}:latest
 
       - name: Save Docker Image
         run: |
-          docker save -o frontend-app.tar ${{ env.DOCKER_IMAGE_NAME }}:latest
-          chmod 644 frontend-app.tar
+          docker save -o scholiq-frontend.tar ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+          chmod 644 scholiq-frontend.tar
 
-      - name: Prepare VPS Environment
+      - name: Clean up existing deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: root
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            echo "🔍 Checking running services..."
+            echo "🔍 Stopping existing frontend services..."
             
-            # Stop services using port 3000
-            if systemctl is-active --quiet nginx; then
-              systemctl stop nginx
-            fi
+            # Stop and remove existing container
+            docker stop scholiq-frontend || true
+            docker rm scholiq-frontend || true
             
-            # Kill any processes using port 3000
-            fuser -k 3000/tcp || true
+            # Remove old images to save space
+            docker images | grep scholiq-frontend | awk '{print $3}' | xargs docker rmi || true
             
-            echo "🧹 Cleaning up existing resources..."
-            rm -f "/tmp/frontend-app.tar"
-            docker stop frontend-app || true
-            docker rm frontend-app || true
-            docker image prune -f --filter "label=stage=builder"
+            # Clean up transfer file
+            rm -f /tmp/scholiq-frontend.tar
+            
+            echo "✅ Cleanup completed"
 
-      - name: Transfer Docker Image
+      - name: Transfer Docker Image to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: root
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
-          source: "frontend-app.tar"
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "scholiq-frontend.tar"
           target: "/tmp"
           overwrite: true
 
-      - name: Deploy Container
+      - name: Deploy Frontend Container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: root
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
           script: |
             echo "📦 Loading Docker image..."
-            docker load < /tmp/frontend-app.tar
+            docker load < /tmp/scholiq-frontend.tar
             
-            echo "🚀 Starting container..."
-            docker run -d --name frontend-app \
+            echo "🚀 Starting frontend container..."
+            docker run -d --name scholiq-frontend \
               --restart unless-stopped \
-              -e NODE_ENV=production \
-              -e HOST=0.0.0.0 \
-              -e PORT=${{ env.CONTAINER_PORT }} \
               -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
-              ${{ env.DOCKER_IMAGE_NAME }}:latest
+              ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
             
-            # Give the container some time to start up
-            echo "⏳ Waiting for initial startup..."
-            sleep 15
+            echo "⏳ Waiting for container to start..."
+            sleep 10
             
-            # Check if container is running
-            if ! docker ps | grep -q frontend-app; then
-              echo "❌ Container failed to start"
-              docker logs frontend-app
-              exit 1
-            fi
-            
-            # Check if the application is responding
-            for i in {1..6}; do
-              echo "🔍 Checking application health (attempt $i/6)..."
+            # Health check
+            for i in {1..12}; do
+              echo "🔍 Health check attempt $i/12..."
               if curl -sf http://localhost:${{ env.HOST_PORT }}/ > /dev/null; then
-                echo "✅ Application is responding"
+                echo "✅ Frontend is running successfully!"
+                echo "🌐 Application accessible at: http://89.116.21.135:${{ env.HOST_PORT }}"
                 break
               fi
-              if [ $i -eq 6 ]; then
-                echo "❌ Application failed to respond"
-                docker logs frontend-app
+              if [ $i -eq 12 ]; then
+                echo "❌ Frontend health check failed"
+                echo "Container logs:"
+                docker logs scholiq-frontend --tail 50
                 exit 1
               fi
-              echo "⏳ Waiting for application to become available..."
-              sleep 10
+              echo "⏳ Waiting 5 seconds before next check..."
+              sleep 5
             done
             
-            echo "🧹 Cleaning up..."
-            rm -f /tmp/frontend-app.tar
+            echo "🧹 Cleaning up transfer files..."
+            rm -f /tmp/scholiq-frontend.tar
+            
+            echo "📊 Container status:"
+            docker ps | grep scholiq-frontend
