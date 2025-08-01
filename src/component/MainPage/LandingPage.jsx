@@ -81,8 +81,8 @@ export const LandingPage = ({onBooleanChange}) => {
 
     const handleCloseForgetPassword = () => {
         setOpenForgetPassword(false);
-
     };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -117,7 +117,6 @@ export const LandingPage = ({onBooleanChange}) => {
                             dispatch(fetchUserSuccess(responseUser.data));
                             if (responseUser.data) {
                                 dispatch(fetchSchoolById(responseUser.data.schoolId));
-                                //  dispatch(fetchSchool(responseUser.data.schoolId));
                                 handleClose();
                                 onBooleanChange();
                             }
@@ -127,28 +126,26 @@ export const LandingPage = ({onBooleanChange}) => {
                     }
 
                 } else {
-                    //  onBooleanChange();
                     setInvalidCred(response.data.response || 'Invalid credentials');
                 }
             } else {
                 setInvalidCred("EmailId does not exist in our records. Please check the emailId and try again.");
             }
         } catch (error) {
-            // onBooleanChange();
             console.error('Error:', error);
 
-            if (error.response.data.status === 401) {
+            if (error.response?.data?.status === 401) {
                 setInvalidCred(error.response.data.description);
-            } else if (error.response.data.status === 403) {
+            } else if (error.response?.data?.status === 403) {
                 setInvalidCred(error.response.data.description);
-            } else if (error.response.data.status === 500) {
+            } else if (error.response?.data?.status === 500) {
                 setInvalidCred(error.response.data.description);
             } else {
                 setInvalidCred("An error occurred. Please try again later.");
             }
-
         }
     };
+
     const handleClickShowPassword = () => {
         setShowPassword(!showPassword); // Toggle the showPassword state
     };
@@ -163,8 +160,6 @@ export const LandingPage = ({onBooleanChange}) => {
         autoplaySpeed: 3000,
         fade: true,
         pauseOnHover: false,
-
-
     };
 
     const [formData, setFormData] = useState({
@@ -182,6 +177,18 @@ export const LandingPage = ({onBooleanChange}) => {
         });
     };
 
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
+        // Add your contact form submission logic here
+        console.log('Contact form submitted:', formData);
+        // Reset form after submission
+        setFormData({
+            name: '',
+            email: '',
+            subject: '',
+            message: '',
+        });
+    };
 
     const handleClose = () => setOpen(false);
 
@@ -189,13 +196,13 @@ export const LandingPage = ({onBooleanChange}) => {
         setTabIndex(newValue);
         setInvalidCred('');
     };
+
     const handleRegistrationSuccess = ({email, password}) => {
         setPhone(email);
         setOtpPassword(password);
         setTabIndex(0);
         setOpen(true);
         setSnackbarOpen(true); // Show success popup
-
     };
 
     const handleSnackbarClose = () => {
@@ -204,7 +211,6 @@ export const LandingPage = ({onBooleanChange}) => {
 
     return (
         <>
-
             <Transition in={open} timeout={400}>
                 <Modal
                     open={open}
@@ -241,7 +247,7 @@ export const LandingPage = ({onBooleanChange}) => {
                                     <TextField
                                         margin="normal"
                                         fullWidth
-                                        value={phone}  //
+                                        value={phone}
                                         label="Email Address/Phone Number"
                                         onChange={(e) => setPhone(e.target.value)}
                                     />
@@ -249,7 +255,7 @@ export const LandingPage = ({onBooleanChange}) => {
                                         margin="normal"
                                         label="Password"
                                         fullWidth
-                                        type={showPassword ? 'text' : 'password'} // Toggle between text and password
+                                        type={showPassword ? 'text' : 'password'}
                                         value={otpPassword}
                                         onChange={(e) => setOtpPassword(e.target.value)}
                                         InputProps={{
@@ -287,22 +293,22 @@ export const LandingPage = ({onBooleanChange}) => {
                             {tabIndex === 1 && (
                                 <Box sx={{mt: 3, width: '100%'}}>
                                     <School onRegistrationSuccess={handleRegistrationSuccess}/>
-
                                 </Box>
                             )}
                         </Box>
                     </Box>
                 </Modal>
             </Transition>
+
             {/* Centered Snackbar for success notification */}
             <Snackbar
                 open={snackbarOpen}
-                autoHideDuration={6000} // Duration to auto-hide the Snackbar
+                autoHideDuration={6000}
                 onClose={handleSnackbarClose}
-                anchorOrigin={{vertical: 'top', horizontal: 'center'}} // Centered horizontally
+                anchorOrigin={{vertical: 'top', horizontal: 'center'}}
                 sx={{
                     position: 'absolute',
-                    top: '20%', // Adjust position to be above the modal
+                    top: '20%',
                     left: '50%',
                     transform: 'translate(-50%, -20%)',
                     width: '400px',
@@ -316,14 +322,15 @@ export const LandingPage = ({onBooleanChange}) => {
                         width: '100%',
                         display: 'flex',
                         justifyContent: 'center',
-                        padding: '20px', // Increase padding
-                        fontSize: '18px', // Increase font size for better readability
-                        textAlign: 'center', // Center the text inside the Alert
+                        padding: '20px',
+                        fontSize: '18px',
+                        textAlign: 'center',
                     }}
                 >
                     <strong>Congratulations!</strong> Your account has been successfully created.
                 </Alert>
             </Snackbar>
+
             <Transition in={openForgetPassword} timeout={400}>
                 <Modal
                     open={openForgetPassword}
@@ -340,25 +347,20 @@ export const LandingPage = ({onBooleanChange}) => {
 
             <nav className="navbar">
                 <div className="nav-container">
-                    {/* Logo */}
-
                     <div className="logo" style={{display: 'flex', alignItems: 'center'}}>
                         <a href="#home" onClick={() => setIsMenuOpen(false)}
                            style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
                             <img
                                 src={logo}
                                 alt="YourLogo"
-
                             />
                         </a>
                     </div>
 
-                    {/* Mobile Menu Toggle */}
                     <div className="nav-icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
                         <i className={isMenuOpen ? 'fa fa-times' : 'fa fa-bars'}></i>
                     </div>
 
-                    {/* Navigation Links */}
                     <ul className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
                         <li><a href="#home" onClick={() => setIsMenuOpen(false)}>Home</a></li>
                         <li><a href="#about" onClick={() => setIsMenuOpen(false)}>About</a></li>
@@ -376,20 +378,19 @@ export const LandingPage = ({onBooleanChange}) => {
                     </ul>
                 </div>
             </nav>
+
             <section id="home" className="home-section">
                 <div className="slider-container">
                     <Slider {...settings}>
-
                         <div className="slide">
                             <img src={bg2} alt="Welcome to Our School" className="slide-image"/>
                             <div className="overlay">
-                                <div className="text-content animated fadeInLeft delay-1s">
-                                    <h1 className="animated slideInLeft">Welcome to Our School</h1>
-                                    <p className="animated slideInLeft delay-1s">School Management System</p>
-                                    <p className="animated slideInLeft delay-2s">Empowering students to achieve their
-                                        potential.</p>
-                                    <button className="slide-button animated bounceInLeft delay-3s"
-                                            onClick={handleOpenModal}>Get Started
+                                <div className="text-content">
+                                    <h1>Welcome to Our School</h1>
+                                    <p>School Management System</p>
+                                    <p>Empowering students to achieve their potential.</p>
+                                    <button className="slide-button" onClick={handleOpenModal}>
+                                        Get Started
                                     </button>
                                 </div>
                             </div>
@@ -398,35 +399,32 @@ export const LandingPage = ({onBooleanChange}) => {
                         <div className="slide">
                             <img src={bg1} alt="Explore Our Programs" className="slide-image"/>
                             <div className="overlay">
-                                <div className="text-content animated fadeInDown delay-1s">
-                                    <h1 className="animated fadeInDown">Explore Our Programs</h1>
-                                    <p className="animated fadeInDown delay-1s">Learn more about what we offer</p>
-                                    <p className="animated fadeInDown delay-2s">Innovative curriculum tailored to your
-                                        needs.</p>
-                                    <button className="slide-button animated fadeInUp delay-3s">Learn More</button>
+                                <div className="text-content">
+                                    <h1>Explore Our Programs</h1>
+                                    <p>Learn more about what we offer</p>
+                                    <p>Innovative curriculum tailored to your needs.</p>
+                                    <button className="slide-button">Learn More</button>
                                 </div>
                             </div>
                         </div>
-
 
                         <div className="slide">
                             <img src={bg3} alt="Join Our Community" className="slide-image"/>
                             <div className="overlay">
-                                <div className="text-content animated fadeInUp delay-3s">
-                                    <h1 className="animated zoomIn">Join Our Community</h1>
-                                    <p className="animated zoomIn delay-1s">Be a part of our vibrant community</p>
-                                    <p className="animated zoomIn delay-2s">Connect, grow, and thrive together.</p>
-                                    <button className="slide-button animated zoomIn delay-3s"
-                                            onClick={handleOpenModal}>Sign
-                                        Up
+                                <div className="text-content">
+                                    <h1>Join Our Community</h1>
+                                    <p>Be a part of our vibrant community</p>
+                                    <p>Connect, grow, and thrive together.</p>
+                                    <button className="slide-button" onClick={handleOpenModal}>
+                                        Sign Up
                                     </button>
                                 </div>
                             </div>
                         </div>
-
                     </Slider>
                 </div>
             </section>
+
             {/* About Us Section */}
             <section id="about" className="about-section">
                 <div className="container">
@@ -440,11 +438,10 @@ export const LandingPage = ({onBooleanChange}) => {
                             </h2>
                             <p className="description">
                                 Our school is dedicated to providing a top-notch education and a nurturing environment
-                                for
-                                our students.
-                                <p>We focus on holistic development and innovative teaching methods to ensure each
-                                    student reaches their full potential.</p>
+                                for our students.
                             </p>
+                            <p>We focus on holistic development and innovative teaching methods to ensure each
+                                student reaches their full potential.</p>
                             <p className="quote">
                                 "Education is the most powerful weapon which you can use to change the world." - Nelson
                                 Mandela
@@ -456,7 +453,6 @@ export const LandingPage = ({onBooleanChange}) => {
             </section>
 
             {/* Features Section */}
-
             <section id="features" className="features-section">
                 <div className="container">
                     <h2 className="section-title">Our Amazing Features</h2>
@@ -510,10 +506,9 @@ export const LandingPage = ({onBooleanChange}) => {
             {/* pricing Section */}
             <section id="pricing" className="pricing-section">
                 <div className="container">
-                    <Fade bottom>
+                    <Fade in={true}>
                         <h2 className="section-title">Our Pricing Plans</h2>
                         <div className="pricing-content">
-
                             <div className="pricing-card">
                                 <div className="pricing-header">
                                     <h3 className="pricing-title">Plan 1</h3>
@@ -534,10 +529,9 @@ export const LandingPage = ({onBooleanChange}) => {
                                     <li>Library Module</li>
                                     <li>Student/Parents Mobile APP (IOS)</li>
                                 </ul>
-                                <button className="btn-buy animated bounceIn">Buy Now</button>
+                                <button className="btn-buy">Buy Now</button>
                             </div>
 
-                            {/* <!-- Plan 2 --> */}
                             <div className="pricing-card">
                                 <div className="pricing-header">
                                     <h3 className="pricing-title">Plan 2</h3>
@@ -558,10 +552,9 @@ export const LandingPage = ({onBooleanChange}) => {
                                     <li>Library Module</li>
                                     <li>Student/Parents Mobile APP (IOS)</li>
                                 </ul>
-                                <button className="btn-buy animated bounceIn">Buy Now</button>
+                                <button className="btn-buy">Buy Now</button>
                             </div>
 
-                            {/* <!-- Plan 3 --> */}
                             <div className="pricing-card">
                                 <div className="pricing-header">
                                     <h3 className="pricing-title">Plan 3</h3>
@@ -582,38 +575,12 @@ export const LandingPage = ({onBooleanChange}) => {
                                     <li>Library Module</li>
                                     <li>Student/Parents Mobile APP (IOS)</li>
                                 </ul>
-                                <button className="btn-buy animated bounceIn">Buy Now</button>
+                                <button className="btn-buy">Buy Now</button>
                             </div>
                         </div>
                     </Fade>
                 </div>
             </section>
-
-
-            {/* Admissions Section */}
-            {/* <section id="admissions" className="admissions-section">
-                <div className="container">
-                    <Fade bottom>
-                        <h2 className="section-title">Admissions</h2>
-                        <div className="admissions-content">
-                            <img src={bg5} alt="Admissions" className="admissions-image"/>
-                            <div className="admissions-text">
-                                <p className="description">
-                                    Join our vibrant community of learners. Our admissions process is designed to be
-                                    smooth and straightforward, allowing you to focus on what's important - your
-                                    education.
-                                </p>
-                                <ul className="admissions-benefits">
-                                    <li>Seamless online application process</li>
-                                    <li>Access to scholarships and financial aid</li>
-                                    <li>Dedicated support for international students</li>
-                                </ul>
-                                <button className="btn-apply animated bounceIn">Apply Now</button>
-                            </div>
-                        </div>
-                    </Fade>
-                </div>
-            </section> */}
 
             {/* Contact Us Section */}
             <section id="contact" className="contact-us-section">
@@ -631,7 +598,7 @@ export const LandingPage = ({onBooleanChange}) => {
 
                         {/* Right Column: Contact Form */}
                         <div className="contact-form">
-                            <form onSubmit={handleSubmit}>
+                            <form onSubmit={handleFormSubmit}>
                                 <div className="form-group">
                                     <label htmlFor="name">
                                         <FaUser className="form-icon"/>
@@ -676,14 +643,14 @@ export const LandingPage = ({onBooleanChange}) => {
                                 </div>
                                 <div className="form-group">
                                     <label htmlFor="message">
-              <textarea
-                  id="message"
-                  name="message"
-                  placeholder="Your Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-              ></textarea>
+                                        <textarea
+                                            id="message"
+                                            name="message"
+                                            placeholder="Your Message"
+                                            value={formData.message}
+                                            onChange={handleChange}
+                                            required
+                                        ></textarea>
                                     </label>
                                 </div>
                                 <button type="submit" className="btn btn-submit">
@@ -695,7 +662,6 @@ export const LandingPage = ({onBooleanChange}) => {
                     </div>
                 </div>
             </section>
-
 
             {/* Footer */}
             <footer className="footer">
@@ -717,8 +683,7 @@ export const LandingPage = ({onBooleanChange}) => {
                         <div className="col-md-4 footer-column">
                             <h4 className="footer-heading">Contact Information</h4>
                             <ul className="footer-contact">
-                                <li><i className="fas fa-map-marker-alt"></i> 123 School St, Education City, EC 12345
-                                </li>
+                                <li><i className="fas fa-map-marker-alt"></i> 123 School St, Education City, EC 12345</li>
                                 <li><i className="fas fa-phone-alt"></i> (123) 456-7890</li>
                                 <li><i className="fas fa-envelope"></i> info@ourschool.com</li>
                             </ul>
@@ -729,13 +694,13 @@ export const LandingPage = ({onBooleanChange}) => {
                             <h4 className="footer-heading">Follow Us</h4>
                             <div className="footer-social">
                                 <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
-                                   className="animated fadeIn social-icon"><FaFacebookF/></a>
+                                   className="social-icon"><FaFacebookF/></a>
                                 <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
-                                   className="animated fadeIn social-icon"><FaTwitter/></a>
+                                   className="social-icon"><FaTwitter/></a>
                                 <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"
-                                   className="animated fadeIn social-icon"><FaLinkedinIn/></a>
+                                   className="social-icon"><FaLinkedinIn/></a>
                                 <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
-                                   className="animated fadeIn social-icon"><FaInstagram/></a>
+                                   className="social-icon"><FaInstagram/></a>
                             </div>
                         </div>
                     </div>
@@ -746,7 +711,6 @@ export const LandingPage = ({onBooleanChange}) => {
                     </div>
                 </div>
             </footer>
-
         </>
     );
 };
