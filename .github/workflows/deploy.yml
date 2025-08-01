@@ -1,0 +1,121 @@
+name: Docker Build and Deploy (Frontend)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  DOCKER_IMAGE_NAME: frontend-app
+  CONTAINER_PORT: 3000
+  HOST_PORT: 3000
+  NODE_VERSION: '16'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Docker Build and Push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ${{ env.DOCKER_IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save Docker Image
+        run: |
+          docker save -o frontend-app.tar ${{ env.DOCKER_IMAGE_NAME }}:latest
+          chmod 644 frontend-app.tar
+
+      - name: Prepare VPS Environment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "🔍 Checking running services..."
+            
+            # Stop services using port 3000
+            if systemctl is-active --quiet nginx; then
+              systemctl stop nginx
+            fi
+            
+            # Kill any processes using port 3000
+            fuser -k 3000/tcp || true
+            
+            echo "🧹 Cleaning up existing resources..."
+            rm -f "/tmp/frontend-app.tar"
+            docker stop frontend-app || true
+            docker rm frontend-app || true
+            docker image prune -f --filter "label=stage=builder"
+
+      - name: Transfer Docker Image
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "frontend-app.tar"
+          target: "/tmp"
+          overwrite: true
+
+      - name: Deploy Container
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: root
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            echo "📦 Loading Docker image..."
+            docker load < /tmp/frontend-app.tar
+            
+            echo "🚀 Starting container..."
+            docker run -d --name frontend-app \
+              --restart unless-stopped \
+              -e NODE_ENV=production \
+              -e HOST=0.0.0.0 \
+              -e PORT=${{ env.CONTAINER_PORT }} \
+              -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
+              ${{ env.DOCKER_IMAGE_NAME }}:latest
+            
+            # Give the container some time to start up
+            echo "⏳ Waiting for initial startup..."
+            sleep 15
+            
+            # Check if container is running
+            if ! docker ps | grep -q frontend-app; then
+              echo "❌ Container failed to start"
+              docker logs frontend-app
+              exit 1
+            fi
+            
+            # Check if the application is responding
+            for i in {1..6}; do
+              echo "🔍 Checking application health (attempt $i/6)..."
+              if curl -sf http://localhost:${{ env.HOST_PORT }}/ > /dev/null; then
+                echo "✅ Application is responding"
+                break
+              fi
+              if [ $i -eq 6 ]; then
+                echo "❌ Application failed to respond"
+                docker logs frontend-app
+                exit 1
+              fi
+              echo "⏳ Waiting for application to become available..."
+              sleep 10
+            done
+            
+            echo "🧹 Cleaning up..."
+            rm -f /tmp/frontend-app.tar
