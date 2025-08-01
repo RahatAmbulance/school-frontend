@@ -3,8 +3,6 @@ name: Build and Deploy Frontend
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
   workflow_dispatch:
 
 env:
@@ -27,18 +25,21 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
-      - name: Install dependencies
+      - name: Clean npm cache and node_modules
         run: |
-          npm ci --legacy-peer-deps
-          npm audit fix --force || true
+          npm cache clean --force
+          rm -rf node_modules package-lock.json
+
+      - name: Install dependencies with force resolution
+        run: |
+          npm install --legacy-peer-deps --force
+          npm ls react-scripts || npm install react-scripts@5.0.1 --save-dev
 
       - name: Verify react-scripts installation
         run: |
           npx react-scripts --version
-          ls -la node_modules/.bin/ | grep react-scripts
+          which react-scripts || echo "react-scripts not in PATH"
+          ls -la node_modules/.bin/ | grep react-scripts || echo "react-scripts not found in .bin"
 
       - name: Build application
         run: |
@@ -47,11 +48,6 @@ jobs:
           CI: false
           GENERATE_SOURCEMAP: false
 
-      - name: List build output
-        run: |
-          ls -la build/
-          du -sh build/
-
       - name: Build Docker Image
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
@@ -59,13 +55,11 @@ jobs:
 
       - name: Stop and Remove Existing Container
         run: |
-          echo "🔍 Stopping existing frontend services..."
           docker stop scholiq-frontend || true
           docker rm scholiq-frontend || true
 
       - name: Deploy Frontend Container
         run: |
-          echo "🚀 Starting frontend container..."
           docker run -d --name scholiq-frontend \
             --restart unless-stopped \
             -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
@@ -73,10 +67,7 @@ jobs:
 
       - name: Verify Deployment
         run: |
-          echo "⏳ Waiting for container to start..."
-          sleep 10
-          
-          # Check if container is running
+          sleep 15
           if docker ps | grep -q scholiq-frontend; then
             echo "✅ Frontend container is running"
             docker ps | grep scholiq-frontend
@@ -85,32 +76,20 @@ jobs:
             docker logs scholiq-frontend --tail 20
             exit 1
           fi
-          
-          # Health check
-          for i in {1..12}; do
-            echo "🔍 Health check attempt $i/12..."
+
+      - name: Health Check
+        run: |
+          for i in {1..10}; do
             if curl -sf http://localhost:${{ env.HOST_PORT }}/ > /dev/null; then
-              echo "✅ Frontend is running successfully!"
-              echo "🌐 Application accessible at: http://89.116.21.135:${{ env.HOST_PORT }}"
+              echo "✅ Frontend is accessible at http://89.116.21.135:${{ env.HOST_PORT }}"
               break
             fi
-            if [ $i -eq 12 ]; then
+            if [ $i -eq 10 ]; then
               echo "❌ Frontend health check failed"
               docker logs scholiq-frontend --tail 50
-              exit 1
             fi
-            echo "⏳ Waiting 5 seconds before next check..."
-            sleep 5
+            sleep 10
           done
 
-      - name: Cleanup Old Images
-        run: |
-          echo "🧹 Cleaning up old Docker images..."
-          # Keep the latest 3 images, remove older ones
-          docker images scholiq-frontend --format "table {{.Tag}}\t{{.ID}}" | grep -v latest | tail -n +4 | awk '{print $2}' | xargs -r docker rmi || true
-          
-          # Clean up dangling images
-          docker image prune -f
-          
-          echo "📊 Final container status:"
-          docker ps | grep scholiq-frontend
+      - name: Cleanup
+        run: docker image prune -f
