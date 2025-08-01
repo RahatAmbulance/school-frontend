@@ -1,14 +1,13 @@
 import React, {useState} from 'react';
-import ForgetPassword from './ForgetPassword'; // Import the ForgetPassword component
+import ForgetPassword from './ForgetPassword';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import {useDispatch} from 'react-redux';
-import {Transition} from "react-transition-group";
 import School from "./schools/School";
 import Alert from '@mui/material/Alert';
-import Snackbar from '@mui/material/Snackbar'; // Import Snackbar
+import Snackbar from '@mui/material/Snackbar';
 import {
     FaComment,
     FaEnvelope,
@@ -34,8 +33,8 @@ import logo from '../Images/logo-1.png'
 import {fetchSchoolById} from "./schools/redux/schoolActions";
 import {fetchUserFailure, fetchUserSuccess} from "../page/dashboard/redux/userActions";
 import {Box, Button, Fade, IconButton, InputAdornment, TextField} from '@mui/material';
-import Visibility from '@mui/icons-material/Visibility'; // Import Visibility icon
-import VisibilityOff from '@mui/icons-material/VisibilityOff'; // Import VisibilityOff icon
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 const style = {
     position: 'absolute',
@@ -59,21 +58,20 @@ const FeatureBox = ({icon, title, description}) => (
 export const LandingPage = ({onBooleanChange}) => {
     const [openLogin, setOpenLogin] = useState(false);
     const [openForgetPassword, setOpenForgetPassword] = useState(false);
-
     const [open, setOpen] = useState(false);
     const [phone, setPhone] = useState('');
     const [otpPassword, setOtpPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
-
+    const [showPassword, setShowPassword] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [invalidCred, setInvalidCred] = React.useState('');
     const [tabIndex, setTabIndex] = React.useState(0);
-    const [snackbarOpen, setSnackbarOpen] = useState(false); // Snackbar state for popup
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     const dispatch = useDispatch();
 
     const handleOpenModal = () => setOpen(true);
     const handleCloseModal = () => setOpen(false);
+
     const handleOpenForgetPassword = () => {
         setOpenLogin(false);
         setOpenForgetPassword(true);
@@ -85,7 +83,6 @@ export const LandingPage = ({onBooleanChange}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setInvalidCred('');
 
         // Validation for email and password
@@ -99,18 +96,21 @@ export const LandingPage = ({onBooleanChange}) => {
             setInvalidCred('Please Enter Password');
             return;
         }
+
         const LOGIN_PASSWORD = "/auth/login";
         try {
             const responseIsEmail = await LOGINAPI.get(`/api/master/isUserExist/${phone}`);
-            const emailExists = responseIsEmail.data === true; // Check if the response is true
+            const emailExists = responseIsEmail.data === true;
             console.log("emailExists==", emailExists);
+
             if (emailExists) {
                 const response = await LOGINAPI.post(LOGIN_PASSWORD, {email: phone, password: otpPassword});
                 if (response.status === 200) {
-                    const token = response.data.token; // Adjust according to your API response structure
-                    dispatch(setUser(response.data.loginId)); // Set user info in Redux
-                    dispatch(setToken(token)); // Store token in Redux
+                    const token = response.data.token;
+                    dispatch(setUser(response.data.loginId));
+                    dispatch(setToken(token));
                     localStorage.setItem('token', token);
+
                     if (response.data.loginId) {
                         try {
                             const responseUser = await api.get(`/api/user/${response.data.loginId}`);
@@ -124,7 +124,6 @@ export const LandingPage = ({onBooleanChange}) => {
                             dispatch(fetchUserFailure(error.message));
                         }
                     }
-
                 } else {
                     setInvalidCred(response.data.response || 'Invalid credentials');
                 }
@@ -147,7 +146,7 @@ export const LandingPage = ({onBooleanChange}) => {
     };
 
     const handleClickShowPassword = () => {
-        setShowPassword(!showPassword); // Toggle the showPassword state
+        setShowPassword(!showPassword);
     };
 
     const settings = {
@@ -179,8 +178,9 @@ export const LandingPage = ({onBooleanChange}) => {
 
     const handleFormSubmit = async (e) => {
         e.preventDefault();
-        // Add your contact form submission logic here
         console.log('Contact form submitted:', formData);
+        // Add your contact form submission logic here
+
         // Reset form after submission
         setFormData({
             name: '',
@@ -202,7 +202,7 @@ export const LandingPage = ({onBooleanChange}) => {
         setOtpPassword(password);
         setTabIndex(0);
         setOpen(true);
-        setSnackbarOpen(true); // Show success popup
+        setSnackbarOpen(true);
     };
 
     const handleSnackbarClose = () => {
@@ -211,14 +211,15 @@ export const LandingPage = ({onBooleanChange}) => {
 
     return (
         <>
-            <Transition in={open} timeout={400}>
-                <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-modal-title"
-                    aria-describedby="modal-modal-description"
-                    sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
+            {/* Login/Registration Modal */}
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+                <Fade in={open} timeout={400}>
                     <Box sx={style}>
                         <Box
                             sx={{
@@ -297,10 +298,10 @@ export const LandingPage = ({onBooleanChange}) => {
                             )}
                         </Box>
                     </Box>
-                </Modal>
-            </Transition>
+                </Fade>
+            </Modal>
 
-            {/* Centered Snackbar for success notification */}
+            {/* Success Snackbar */}
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={6000}
@@ -331,29 +332,28 @@ export const LandingPage = ({onBooleanChange}) => {
                 </Alert>
             </Snackbar>
 
-            <Transition in={openForgetPassword} timeout={400}>
-                <Modal
-                    open={openForgetPassword}
-                    onClose={handleCloseForgetPassword}
-                    aria-labelledby="forget-password-modal"
-                    aria-describedby="forget-password-description"
-                    sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
-                >
+            {/* Forget Password Modal */}
+            <Modal
+                open={openForgetPassword}
+                onClose={handleCloseForgetPassword}
+                aria-labelledby="forget-password-modal"
+                aria-describedby="forget-password-description"
+                sx={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}
+            >
+                <Fade in={openForgetPassword} timeout={400}>
                     <Box sx={style}>
                         <ForgetPassword onClose={handleCloseForgetPassword}/>
                     </Box>
-                </Modal>
-            </Transition>
+                </Fade>
+            </Modal>
 
+            {/* Navigation */}
             <nav className="navbar">
                 <div className="nav-container">
                     <div className="logo" style={{display: 'flex', alignItems: 'center'}}>
                         <a href="#home" onClick={() => setIsMenuOpen(false)}
                            style={{textDecoration: 'none', color: 'inherit', cursor: 'pointer'}}>
-                            <img
-                                src={logo}
-                                alt="YourLogo"
-                            />
+                            <img src={logo} alt="YourLogo"/>
                         </a>
                     </div>
 
@@ -379,6 +379,7 @@ export const LandingPage = ({onBooleanChange}) => {
                 </div>
             </nav>
 
+            {/* Hero Section */}
             <section id="home" className="home-section">
                 <div className="slider-container">
                     <Slider {...settings}>
@@ -503,79 +504,81 @@ export const LandingPage = ({onBooleanChange}) => {
                 </div>
             </section>
 
-            {/* pricing Section */}
+            {/* Pricing Section */}
             <section id="pricing" className="pricing-section">
                 <div className="container">
-                    <Fade in={true}>
-                        <h2 className="section-title">Our Pricing Plans</h2>
-                        <div className="pricing-content">
-                            <div className="pricing-card">
-                                <div className="pricing-header">
-                                    <h3 className="pricing-title">Plan 1</h3>
-                                    <p className="pricing-price">₹2000/year</p>
+                    <Fade in={true} timeout={1000}>
+                        <div>
+                            <h2 className="section-title">Our Pricing Plans</h2>
+                            <div className="pricing-content">
+                                <div className="pricing-card">
+                                    <div className="pricing-header">
+                                        <h3 className="pricing-title">Plan 1</h3>
+                                        <p className="pricing-price">₹2000/year</p>
+                                    </div>
+                                    <ul className="pricing-features">
+                                        <li>School ERP (100+ Module)</li>
+                                        <li>Whatsapp Integration</li>
+                                        <li>SMS Integration</li>
+                                        <li>Biometric/Facial Recognition Integration</li>
+                                        <li>Payment Gateway Integration</li>
+                                        <li>Student/Parents Web Login</li>
+                                        <li>Student/Parents Mobile APP (Android)</li>
+                                        <li>Teacher Mobile APP (Android)</li>
+                                        <li>Admin Mobile APP (Android)</li>
+                                        <li>Website</li>
+                                        <li>Driver Mobile APP</li>
+                                        <li>Library Module</li>
+                                        <li>Student/Parents Mobile APP (IOS)</li>
+                                    </ul>
+                                    <button className="btn-buy">Buy Now</button>
                                 </div>
-                                <ul className="pricing-features">
-                                    <li>School ERP (100+ Module)</li>
-                                    <li>Whatsapp Integration</li>
-                                    <li>SMS Integration</li>
-                                    <li>Biometric/Facial Recognition Integration</li>
-                                    <li>Payment Gateway Integration</li>
-                                    <li>Student/Parents Web Login</li>
-                                    <li>Student/Parents Mobile APP (Android)</li>
-                                    <li>Teacher Mobile APP (Android)</li>
-                                    <li>Admin Mobile APP (Android)</li>
-                                    <li>Website</li>
-                                    <li>Driver Mobile APP</li>
-                                    <li>Library Module</li>
-                                    <li>Student/Parents Mobile APP (IOS)</li>
-                                </ul>
-                                <button className="btn-buy">Buy Now</button>
-                            </div>
 
-                            <div className="pricing-card">
-                                <div className="pricing-header">
-                                    <h3 className="pricing-title">Plan 2</h3>
-                                    <p className="pricing-price">₹5000/year</p>
+                                <div className="pricing-card">
+                                    <div className="pricing-header">
+                                        <h3 className="pricing-title">Plan 2</h3>
+                                        <p className="pricing-price">₹5000/year</p>
+                                    </div>
+                                    <ul className="pricing-features">
+                                        <li>School ERP (100+ Module)</li>
+                                        <li>Whatsapp Integration</li>
+                                        <li>SMS Integration</li>
+                                        <li>Biometric/Facial Recognition Integration</li>
+                                        <li>Payment Gateway Integration</li>
+                                        <li>Student/Parents Web Login</li>
+                                        <li>Student/Parents Mobile APP (Android)</li>
+                                        <li>Teacher Mobile APP (Android)</li>
+                                        <li>Admin Mobile APP (Android)</li>
+                                        <li>Website</li>
+                                        <li>Driver Mobile APP</li>
+                                        <li>Library Module</li>
+                                        <li>Student/Parents Mobile APP (IOS)</li>
+                                    </ul>
+                                    <button className="btn-buy">Buy Now</button>
                                 </div>
-                                <ul className="pricing-features">
-                                    <li>School ERP (100+ Module)</li>
-                                    <li>Whatsapp Integration</li>
-                                    <li>SMS Integration</li>
-                                    <li>Biometric/Facial Recognition Integration</li>
-                                    <li>Payment Gateway Integration</li>
-                                    <li>Student/Parents Web Login</li>
-                                    <li>Student/Parents Mobile APP (Android)</li>
-                                    <li>Teacher Mobile APP (Android)</li>
-                                    <li>Admin Mobile APP (Android)</li>
-                                    <li>Website</li>
-                                    <li>Driver Mobile APP</li>
-                                    <li>Library Module</li>
-                                    <li>Student/Parents Mobile APP (IOS)</li>
-                                </ul>
-                                <button className="btn-buy">Buy Now</button>
-                            </div>
 
-                            <div className="pricing-card">
-                                <div className="pricing-header">
-                                    <h3 className="pricing-title">Plan 3</h3>
-                                    <p className="pricing-price">₹10000/year</p>
+                                <div className="pricing-card">
+                                    <div className="pricing-header">
+                                        <h3 className="pricing-title">Plan 3</h3>
+                                        <p className="pricing-price">₹10000/year</p>
+                                    </div>
+                                    <ul className="pricing-features">
+                                        <li>School ERP (100+ Module)</li>
+                                        <li>Whatsapp Integration</li>
+                                        <li>SMS Integration</li>
+                                        <li>Biometric/Facial Recognition Integration</li>
+                                        <li>Payment Gateway Integration</li>
+                                        <li>Student/Parents Web Login</li>
+                                        <li>Student/Parents Mobile APP (Android)</li>
+                                        <li>Teacher Mobile APP (Android)</li>
+                                        <li>Admin Mobile APP (Android)</li>
+                                        <li>Website</li>
+                                        <li>Driver Mobile APP</li>
+                                        <li>Library Module</li>
+                                        <li>Student/Parents Mobile APP (IOS)</li>
+                                    </ul>
+                                    <button className="btn-buy">Buy Now</button>
                                 </div>
-                                <ul className="pricing-features">
-                                    <li>School ERP (100+ Module)</li>
-                                    <li>Whatsapp Integration</li>
-                                    <li>SMS Integration</li>
-                                    <li>Biometric/Facial Recognition Integration</li>
-                                    <li>Payment Gateway Integration</li>
-                                    <li>Student/Parents Web Login</li>
-                                    <li>Student/Parents Mobile APP (Android)</li>
-                                    <li>Teacher Mobile APP (Android)</li>
-                                    <li>Admin Mobile APP (Android)</li>
-                                    <li>Website</li>
-                                    <li>Driver Mobile APP</li>
-                                    <li>Library Module</li>
-                                    <li>Student/Parents Mobile APP (IOS)</li>
-                                </ul>
-                                <button className="btn-buy">Buy Now</button>
                             </div>
                         </div>
                     </Fade>
