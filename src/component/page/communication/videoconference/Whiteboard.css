@@ -1,0 +1,290 @@
+/* Main Whiteboard Container */
+.whiteboard-container {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: 'Roboto', 'Segoe UI', sans-serif;
+}
+
+/* Toolbar Styling */
+.whiteboard-toolbar {
+    background: linear-gradient(to right, #ffffff, #f8f9fa);
+    padding: 10px 16px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    position: relative;
+    z-index: 10;
+}
+
+/* Toolbar Groups */
+.tool-group, .color-width-group, .history-group,
+.page-navigation, .advanced-tools, .teacher-controls, .student-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.tool-group:hover, .history-group:hover, .advanced-tools:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Dividers */
+.MuiDivider-vertical {
+    margin: 0 4px;
+    height: 30px;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Button Styling */
+.whiteboard-toolbar .MuiIconButton-root {
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    transition: all 0.2s ease;
+}
+
+.whiteboard-toolbar .MuiIconButton-root:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+    transform: translateY(-1px);
+}
+
+.whiteboard-toolbar .MuiIconButton-root.Mui-disabled {
+    color: rgba(0, 0, 0, 0.26);
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.whiteboard-toolbar .MuiIconButton-colorPrimary {
+    background-color: rgba(25, 118, 210, 0.12);
+    color: #1976d2;
+}
+
+/* Color picker styling */
+input[type="color"] {
+    -webkit-appearance: none;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 8px;
+}
+
+input[type="color"]:hover {
+    transform: scale(1.05);
+}
+
+input[type="color"]:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Slider styling */
+.MuiSlider-root {
+    color: #1976d2;
+    height: 4px;
+}
+
+.MuiSlider-thumb {
+    width: 16px;
+    height: 16px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+.MuiSlider-thumb:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Canvas container */
+.canvas-container {
+    position: relative;
+    flex-grow: 1;
+    background-color: #ffffff;
+    border-radius: 0 0 12px 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.whiteboard-canvas {
+    cursor: crosshair;
+    touch-action: none;
+    background-color: #ffffff;
+    border-radius: 0 0 12px 12px;
+}
+
+/* Lock overlay */
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(250, 250, 250, 0.85);
+    z-index: 10;
+    backdrop-filter: blur(2px);
+    border-radius: 0 0 12px 12px;
+    transition: all 0.3s ease;
+}
+
+.lock-overlay .MuiTypography-h6 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #546e7a;
+    padding: 12px 24px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.lock-overlay .MuiSvgIcon-root {
+    color: #f44336;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+/* Page navigation */
+.page-navigation {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    padding: 2px 8px;
+}
+
+.page-navigation .MuiTypography-body2 {
+    min-width: 80px;
+    text-align: center;
+    font-weight: 500;
+    color: #546e7a;
+}
+
+/* Checkbox labels */
+.teacher-controls .MuiFormControlLabel-root {
+    margin-right: 2px;
+}
+
+.teacher-controls .MuiFormControlLabel-label {
+    font-size: 0.75rem;
+    color: #546e7a;
+}
+
+.teacher-controls .MuiCheckbox-root {
+    padding: 4px;
+}
+
+/* Tool active states */
+.tool-active {
+    background-color: rgba(25, 118, 210, 0.12);
+    color: #1976d2;
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .whiteboard-toolbar {
+        padding: 8px !important;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .MuiDivider-vertical {
+        display: none;
+    }
+
+    .tool-group, .color-width-group, .history-group,
+    .page-navigation, .advanced-tools, .teacher-controls, .student-controls {
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 8px;
+        padding: 4px 8px;
+        margin-bottom: 4px;
+    }
+
+    .teacher-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+/* Hand raise button special styling */
+.student-controls .MuiIconButton-colorPrimary {
+    background-color: rgba(76, 175, 80, 0.12);
+    color: #4caf50;
+    animation: gentle-pulse 2s infinite;
+}
+
+@keyframes gentle-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+/* Tool-specific cursor styles */
+.tool-pen {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%231976d2" stroke-width="2"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>') 2 22, auto;
+}
+
+.tool-eraser {
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23f44336" stroke-width="2"><path d="M20 20H7L3 16c-1.5-1.45-1.5-3.55 0-5l5-5 9 9-5 5h8v-2"/></svg>') 2 22, auto;
+}
+
+.tool-text {
+    cursor: text;
+}
+
+.tool-rectangle, .tool-circle {
+    cursor: crosshair;
+}
+
+/* Grid styling */
+.grid-line-horizontal, .grid-line-vertical {
+    stroke: rgba(0, 0, 0, 0.05);
+    stroke-width: 0.5;
+}
+
+/* Add transition for smoother drawing */
+.whiteboard-canvas {
+    transition: background-color 0.3s ease;
+}

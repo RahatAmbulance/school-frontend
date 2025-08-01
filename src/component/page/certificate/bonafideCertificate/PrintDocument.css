@@ -1,0 +1,28 @@
+/* Hide everything by default when printing */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: auto;
+    }
+
+    /* Show only the printable area */
+    #printableArea,
+    #printableArea * {
+        visibility: visible;
+    }
+
+    /* Position the printable area at the top of the page */
+    #printableArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: auto;
+        page-break-after: avoid;
+    }
+}

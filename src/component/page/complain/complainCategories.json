@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Academic Issue"
+  },
+  {
+    "id": 2,
+    "name": "Infrastructure Issue"
+  },
+  {
+    "id": 3,
+    "name": "Transport Issue"
+  },
+  {
+    "id": 4,
+    "name": "Fee Issue"
+  }
+]

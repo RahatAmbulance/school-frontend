@@ -1,0 +1,68 @@
+/* Hide everything except the printable area when printing */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: auto;
+        background: #fff !important;
+    }
+
+    #printableArea,
+    #printableArea * {
+        visibility: visible;
+    }
+
+    #printableArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        padding: 40px;
+        background: #fff !important;
+    }
+
+    /* Ensure gradients and backgrounds print properly */
+    #printableArea::before {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Ensure text colors print properly */
+    #printableArea h4,
+    #printableArea h5,
+    #printableArea h6,
+    #printableArea p,
+    #printableArea strong {
+        color: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Remove box shadows and transitions when printing */
+    #printableArea {
+        box-shadow: none !important;
+        transition: none !important;
+    }
+
+    /* Ensure page breaks don't occur in the middle of the certificate */
+    #printableArea {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+
+    /* Hide buttons and other UI elements when printing */
+    button,
+    .MuiButton-root {
+        display: none !important;
+    }
+}
+
+/* Ensure proper page size */
+@page {
+    size: A4;
+    margin: 0;
+}

@@ -1,0 +1,163 @@
+/* PrintPage.css */
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #dc004e;
+    --text-primary: #2c3e50;
+    --text-secondary: #34495e;
+    --background-light: #f5f6fa;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.admit-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.admit-card:hover {
+    transform: translateY(-5px);
+}
+
+.school-header {
+    background: linear-gradient(135deg, var(--primary-color), #2196f3);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.school-logo {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+}
+
+.student-details {
+    padding: 2rem;
+    background: var(--background-light);
+}
+
+.detail-row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    min-width: 120px;
+}
+
+.detail-value {
+    color: var(--text-primary);
+}
+
+.exam-schedule {
+    margin-top: 2rem;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+}
+
+.exam-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+    overflow: hidden;
+    border-radius: var(--border-radius);
+}
+
+.exam-table th,
+.exam-table td {
+    padding: 1rem;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+}
+
+.exam-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.exam-table tr:nth-child(even) {
+    background-color: var(--background-light);
+}
+
+.print-button {
+    background: var(--secondary-color);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--border-radius);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.print-button:hover {
+    background: #c51162;
+}
+
+/* Print-specific styles */
+@media print {
+    body {
+        background: white;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .admit-card {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        break-inside: avoid;
+    }
+
+    .school-header {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .exam-table th {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .exam-schedule {
+        box-shadow: none;
+        break-inside: avoid;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}

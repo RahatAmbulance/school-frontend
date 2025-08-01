@@ -1,0 +1,268 @@
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #dc004e;
+    --text-primary: #2c3e50;
+    --text-secondary: #34495e;
+    --background-light: #f5f6fa;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+}
+
+.admit-card-container {
+    padding: 2rem;
+    font-family: 'Roboto', Arial, sans-serif;
+    background: var(--background-light);
+    min-height: 100vh;
+}
+
+.admit-card-form {
+    margin-bottom: 2rem;
+}
+
+.admit-card-form-paper,
+.admit-card-display-paper {
+    padding: 2rem;
+    margin-top: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    background: white;
+}
+
+.admit-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--primary-color), #2196f3);
+    color: white;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+
+.board-logo,
+.student-photo {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: white;
+    padding: 0.5rem;
+}
+
+.admit-card-details {
+    padding: 2rem;
+    background: var(--background-light);
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.admit-card-details p {
+    margin: 1rem 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.admit-card-details strong {
+    min-width: 120px;
+    color: var(--text-secondary);
+}
+
+.admit-card-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1.5rem;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.admit-card-table th,
+.admit-card-table td {
+    padding: 1rem;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+}
+
+.admit-card-table th {
+    background: var(--primary-color);
+    color: white;
+    font-weight: 500;
+}
+
+.admit-card-table tr:nth-child(even) {
+    background-color: var(--background-light);
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Print styles */
+@media print {
+    .admit-card-container {
+        padding: 0;
+    }
+
+    .admit-card-form-paper,
+    .admit-card-display-paper {
+        box-shadow: none;
+        padding: 1rem;
+    }
+
+    .admit-card-header {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .admit-card-table th {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+}
+
+.search-filters {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+    transition: transform var(--transition-speed);
+}
+
+.search-filters:hover {
+    transform: translateY(-2px);
+}
+
+.admit-card-display-paper {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-speed);
+}
+
+.admit-card-display-paper:hover {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.table-container {
+    margin: 2rem 0;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.MuiTable-root {
+    background: white;
+}
+
+.MuiTableHead-root {
+    background: linear-gradient(135deg, var(--primary-color), #2196f3);
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+    color: white;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.MuiTableBody-root .MuiTableRow-root {
+    transition: background-color var(--transition-speed);
+}
+
+.MuiTableBody-root .MuiTableRow-root:hover {
+    background-color: rgba(25, 118, 210, 0.04);
+}
+
+.MuiTableCell-root {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(224, 224, 224, 0.4);
+}
+
+.MuiCheckbox-root {
+    color: var(--primary-color);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    justify-content: flex-end;
+}
+
+.MuiButton-contained {
+    text-transform: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all var(--transition-speed);
+}
+
+.MuiButton-contained:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.MuiPagination-root {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.MuiPagination-ul {
+    gap: 0.5rem;
+}
+
+.header-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.select-all-section {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(25, 118, 210, 0.04);
+    border-radius: var(--border-radius);
+    margin: 1rem 0;
+}
+
+.form-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.MuiFormControl-root {
+    min-width: 200px;
+}

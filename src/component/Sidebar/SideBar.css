@@ -1,0 +1,198 @@
+/* SideBar.css */
+
+.main-container {
+    display: flex;
+    width: 100%;
+    position: relative;
+    background: #f8fafc;
+}
+
+.sidebar {
+    min-height: 100vh;
+    padding-top: 10px;
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.routes {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+    position: relative;
+}
+
+.routes::-webkit-scrollbar {
+    width: 4px;
+}
+
+.routes::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.routes::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.routes::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.link_text {
+    white-space: nowrap;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.menu {
+    display: flex;
+    color: white;
+    gap: 12px;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-radius: 10px;
+    margin: 0.2rem 0.8rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+}
+
+.menu:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 0;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 0 4px 4px 0;
+    transition: height 0.3s ease;
+}
+
+.menu:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu:hover:before {
+    height: 70%;
+}
+
+.menu_item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    padding-left: 3.5rem;
+    border-radius: 10px;
+    margin: 0.2rem 0.8rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    cursor: pointer;
+}
+
+.menu_item:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2px;
+    height: 0;
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    border-radius: 0 4px 4px 0;
+    transition: height 0.3s ease;
+}
+
+.menu_item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    transform: translateX(5px);
+}
+
+.menu_item:hover:before {
+    height: 70%;
+}
+
+.menu_item.active {
+    background: linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+    color: white;
+}
+
+.menu_item.active:before {
+    height: 70%;
+}
+
+.menu_container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.menu_container .icon {
+    transition: transform 0.3s ease;
+}
+
+.menu_container.open .icon {
+    transform: rotate(180deg);
+}
+
+.icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    transition: all 0.3s ease;
+}
+
+.menu_container .link {
+    padding-left: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.submenu {
+    animation: fadeIn 0.3s ease forwards;
+}
+
+/* Glass effect for containers */
+.glass-container {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.glass-container:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Gradient text effect */
+.gradient-text {
+    background: linear-gradient(90deg, #6366f1 0%, #8b5cf6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

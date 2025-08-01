@@ -1,0 +1,490 @@
+/* CalendarIntegration.css */
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.calendar-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 10px;
+    background-color: #f8f9fa;
+    padding: 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filters-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-badge {
+    background-color: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.calendar-connection {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+    background-color: #f0f8ff;
+    border-radius: 6px;
+    border: 1px solid #b8daff;
+}
+
+.calendar-connection h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #0056b3;
+}
+
+.calendar-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.select-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar-wrapper {
+    height: 520px; /* Fixed height for calendar */
+    margin-bottom: 20px;
+}
+
+.calendar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.calendar-toolbar-nav,
+.calendar-toolbar-views {
+    display: flex;
+    gap: 8px;
+}
+
+.calendar-toolbar-label h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.calendar-toolbar button {
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.calendar-toolbar button:hover {
+    background-color: #e9ecef;
+}
+
+.calendar-toolbar button.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+.event-details {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e5e5;
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.event-title {
+    flex: 1;
+}
+
+.event-title h3 {
+    margin: 0 0 10px 0;
+    color: #252424;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.event-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-right: 8px;
+}
+
+.room-badge {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.calendar-badge {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+.active-badge {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+}
+
+.event-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.quick-join-button {
+    background-color: #464775;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quick-join-button:hover {
+    background-color: #585aa6;
+}
+
+.quick-join-button:disabled {
+    background-color: #e0e0e0;
+    color: #9e9e9e;
+    cursor: not-allowed;
+}
+
+.join-button {
+    background-color: #7b83eb;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.join-button:hover {
+    background-color: #5c64e8;
+}
+
+.event-time {
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.time-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.time-item:last-child {
+    margin-bottom: 0;
+}
+
+.time-label {
+    font-weight: 500;
+    color: #616161;
+    width: 80px;
+}
+
+.time-value {
+    color: #212121;
+}
+
+.room-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #616161;
+    min-width: 100px;
+}
+
+.info-value {
+    color: #212121;
+    flex: 1;
+}
+
+.additional-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: #464775;
+    border: 1px solid #464775;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondary-button:hover {
+    background-color: #f5f5f5;
+    border-color: #585aa6;
+    color: #585aa6;
+}
+
+/* Update existing calendar styles to match Teams */
+.rbc-event {
+    background-color: #464775 !important;
+    border: none !important;
+}
+
+.rbc-event.rbc-selected {
+    background-color: #585aa6 !important;
+}
+
+.rbc-today {
+    background-color: #f0f2ff !important;
+}
+
+.rbc-active {
+    background-color: #e8eaf6 !important;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .event-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .event-actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+
+    .quick-join-button,
+    .join-button {
+        flex: 1;
+    }
+
+    .info-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .info-label {
+        min-width: auto;
+    }
+
+    .additional-actions {
+        flex-direction: column;
+    }
+
+    .secondary-button {
+        width: 100%;
+    }
+}
+
+.import-button {
+    padding: 8px 16px;
+    background-color: #6f42c1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.recurring-button {
+    padding: 8px 16px;
+    background-color: #fd7e14;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.connect-button {
+    padding: 8px 16px;
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    align-self: flex-start;
+}
+
+.disconnect-button {
+    padding: 8px 16px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.refresh-button {
+    padding: 6px 12px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.message-box {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #6c757d;
+}
+
+.calendar-legend {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.calendar-legend h4 {
+    margin-top: 0;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.legend-items {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.color-box {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.active-color {
+    background-color: #28a745;
+}
+
+.scheduled-color {
+    background-color: #007bff;
+}
+
+.calendar-color {
+    background-color: #6f42c1;
+}
+
+/* React Big Calendar Overrides */
+.rbc-event {
+    padding: 4px !important;
+}
+
+.rbc-event-content {
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .calendar-toolbar {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .event-time {
+        flex-direction: column;
+        gap: 0;
+    }
+}

@@ -1,0 +1,21 @@
+.avatar-placeholder {
+    width: 80px; /* Size of the avatar */
+    height: 80px;
+    border-radius: 50%; /* Circular head */
+    background-color: #4ba4f0; /* Head color */
+    position: relative;
+    display: inline-block;
+}
+
+.avatar-placeholder::after {
+    content: '';
+    position: absolute;
+    bottom: -49px; /* Position the body under the head */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px; /* Width of the body */
+    height: 50px; /* Height of the semi-circular body */
+    border-radius: 40%;
+    background-color: #87c9f9; /* Body color */
+}
+
