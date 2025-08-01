@@ -51,9 +51,9 @@ jobs:
       - name: Clean up existing deployment
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.SCHOOL_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SCHOOL_SSH_KEY }}
           script: |
             echo "🔍 Stopping existing frontend services..."
             
@@ -72,9 +72,9 @@ jobs:
       - name: Transfer Docker Image to VPS
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.SCHOOL_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SCHOOL_SSH_KEY }}
           source: "scholiq-frontend.tar"
           target: "/tmp"
           overwrite: true
@@ -82,9 +82,9 @@ jobs:
       - name: Deploy Frontend Container
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST }}
+          host: ${{ secrets.SCHOOL_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
+          key: ${{ secrets.SCHOOL_SSH_KEY }}
           script: |
             echo "📦 Loading Docker image..."
             docker load < /tmp/scholiq-frontend.tar
