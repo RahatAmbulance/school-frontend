@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import ForgetPassword from './ForgetPassword'; // Import the ForgetPassword component
-import Fade from 'react-reveal/Fade';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Tabs from '@mui/material/Tabs';
@@ -34,7 +33,7 @@ import bg4 from '../Images/bg4.webp';
 import logo from '../Images/logo-1.png'
 import {fetchSchoolById} from "./schools/redux/schoolActions";
 import {fetchUserFailure, fetchUserSuccess} from "../page/dashboard/redux/userActions";
-import {Box, Button, IconButton, InputAdornment, TextField} from '@mui/material';
+import {Box, Button, Fade, IconButton, InputAdornment, TextField} from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility'; // Import Visibility icon
 import VisibilityOff from '@mui/icons-material/VisibilityOff'; // Import VisibilityOff icon
 
