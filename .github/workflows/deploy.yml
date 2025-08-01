@@ -15,7 +15,7 @@ env:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, frontend]  # Changed from ubuntu-latest, targets frontend runner
 
     steps:
       - name: Checkout code
@@ -57,70 +57,60 @@ jobs:
           docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
           docker tag ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} ${{ env.DOCKER_IMAGE_NAME }}:latest
 
-      - name: Save Docker Image
+      - name: Stop and Remove Existing Container
         run: |
-          docker save -o scholiq-frontend.tar ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
-          chmod 644 scholiq-frontend.tar
-
-      - name: Clean up existing deployment
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
-          script: |
-            echo "🔍 Stopping existing frontend services..."
-            docker stop scholiq-frontend || true
-            docker rm scholiq-frontend || true
-            docker images | grep scholiq-frontend | awk '{print $3}' | xargs docker rmi || true
-            rm -f /tmp/scholiq-frontend.tar
-            echo "✅ Cleanup completed"
-
-      - name: Transfer Docker Image to VPS
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
-          source: "scholiq-frontend.tar"
-          target: "/tmp"
-          overwrite: true
+          echo "🔍 Stopping existing frontend services..."
+          docker stop scholiq-frontend || true
+          docker rm scholiq-frontend || true
 
       - name: Deploy Frontend Container
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SCHOOL_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.SCHOOL_SSH_KEY }}
-          script: |
-            echo "📦 Loading Docker image..."
-            docker load < /tmp/scholiq-frontend.tar
-            
-            echo "🚀 Starting frontend container..."
-            docker run -d --name scholiq-frontend \
-              --restart unless-stopped \
-              -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
-              ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
-            
-            echo "⏳ Waiting for container to start..."
-            sleep 10
-            
-            # Health check
-            for i in {1..12}; do
-              echo "🔍 Health check attempt $i/12..."
-              if curl -sf http://localhost:${{ env.HOST_PORT }}/ > /dev/null; then
-                echo "✅ Frontend is running successfully!"
-                echo "🌐 Application accessible at: http://89.116.21.135:${{ env.HOST_PORT }}"
-                break
-              fi
-              if [ $i -eq 12 ]; then
-                echo "❌ Frontend health check failed"
-                docker logs scholiq-frontend --tail 50
-                exit 1
-              fi
-              sleep 5
-            done
-            
-            rm -f /tmp/scholiq-frontend.tar
-            echo "📊 Container status:"
+        run: |
+          echo "🚀 Starting frontend container..."
+          docker run -d --name scholiq-frontend \
+            --restart unless-stopped \
+            -p ${{ env.HOST_PORT }}:${{ env.CONTAINER_PORT }} \
+            ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+
+      - name: Verify Deployment
+        run: |
+          echo "⏳ Waiting for container to start..."
+          sleep 10
+          
+          # Check if container is running
+          if docker ps | grep -q scholiq-frontend; then
+            echo "✅ Frontend container is running"
             docker ps | grep scholiq-frontend
+          else
+            echo "❌ Frontend container failed to start"
+            docker logs scholiq-frontend --tail 20
+            exit 1
+          fi
+          
+          # Health check
+          for i in {1..12}; do
+            echo "🔍 Health check attempt $i/12..."
+            if curl -sf http://localhost:${{ env.HOST_PORT }}/ > /dev/null; then
+              echo "✅ Frontend is running successfully!"
+              echo "🌐 Application accessible at: http://89.116.21.135:${{ env.HOST_PORT }}"
+              break
+            fi
+            if [ $i -eq 12 ]; then
+              echo "❌ Frontend health check failed"
+              docker logs scholiq-frontend --tail 50
+              exit 1
+            fi
+            echo "⏳ Waiting 5 seconds before next check..."
+            sleep 5
+          done
+
+      - name: Cleanup Old Images
+        run: |
+          echo "🧹 Cleaning up old Docker images..."
+          # Keep the latest 3 images, remove older ones
+          docker images scholiq-frontend --format "table {{.Tag}}\t{{.ID}}" | grep -v latest | tail -n +4 | awk '{print $2}' | xargs -r docker rmi || true
+          
+          # Clean up dangling images
+          docker image prune -f
+          
+          echo "📊 Final container status:"
+          docker ps | grep scholiq-frontend
