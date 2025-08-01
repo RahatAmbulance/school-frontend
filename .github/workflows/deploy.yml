@@ -27,16 +27,30 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: Install dependencies
         run: |
           npm ci --legacy-peer-deps
           npm audit fix --force || true
+
+      - name: Verify react-scripts installation
+        run: |
+          npx react-scripts --version
+          ls -la node_modules/.bin/ | grep react-scripts
 
       - name: Build application
         run: |
           NODE_OPTIONS="--max_old_space_size=4096" npm run build
         env:
           CI: false
+          GENERATE_SOURCEMAP: false
+
+      - name: List build output
+        run: |
+          ls -la build/
+          du -sh build/
 
       - name: Build Docker Image
         run: |
@@ -56,17 +70,10 @@ jobs:
           key: ${{ secrets.SCHOOL_SSH_KEY }}
           script: |
             echo "🔍 Stopping existing frontend services..."
-            
-            # Stop and remove existing container
             docker stop scholiq-frontend || true
             docker rm scholiq-frontend || true
-            
-            # Remove old images to save space
             docker images | grep scholiq-frontend | awk '{print $3}' | xargs docker rmi || true
-            
-            # Clean up transfer file
             rm -f /tmp/scholiq-frontend.tar
-            
             echo "✅ Cleanup completed"
 
       - name: Transfer Docker Image to VPS
@@ -108,16 +115,12 @@ jobs:
               fi
               if [ $i -eq 12 ]; then
                 echo "❌ Frontend health check failed"
-                echo "Container logs:"
                 docker logs scholiq-frontend --tail 50
                 exit 1
               fi
-              echo "⏳ Waiting 5 seconds before next check..."
               sleep 5
             done
             
-            echo "🧹 Cleaning up transfer files..."
             rm -f /tmp/scholiq-frontend.tar
-            
             echo "📊 Container status:"
             docker ps | grep scholiq-frontend
